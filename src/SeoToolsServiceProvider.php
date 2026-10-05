@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use KFoobar\LaravelSeoTools\View\Components\Breadcrumbs as BreadcrumbsComponent;
 
+/**
+ * Registers breadcrumbs, robots.txt, and the XML sitemap.
+ */
 class SeoToolsServiceProvider extends ServiceProvider
 {
     /**
@@ -18,7 +21,6 @@ class SeoToolsServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/seo.php', 'seo');
 
         $this->app->scoped(BreadcrumbTrail::class);
-        $this->app->singleton(Sitemap::class);
     }
 
     /**

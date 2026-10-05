@@ -45,8 +45,7 @@
                 "KFoobar\\LaravelSeoTools\\SeoToolsServiceProvider"
             ],
             "aliases": {
-                "Breadcrumbs": "KFoobar\\LaravelSeoTools\\Facades\\Breadcrumbs",
-                "Sitemap": "KFoobar\\LaravelSeoTools\\Facades\\Sitemap"
+                "Breadcrumbs": "KFoobar\\LaravelSeoTools\\Facades\\Breadcrumbs"
             }
         }
     },

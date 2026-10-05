@@ -23,5 +23,6 @@ return [
         'route' => '/sitemap.xml',
         'cache' => 3600,
         'urls' => [],
+        'models' => [],
     ],
 ];

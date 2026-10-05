@@ -2,24 +2,14 @@
 
 declare(strict_types=1);
 
-use KFoobar\LaravelSeoTools\Facades\Sitemap;
+use Illuminate\Support\Facades\Route;
 use KFoobar\LaravelSeoTools\Tests\Fixtures\Post;
-
-it('includes urls added at runtime', function () {
-    Sitemap::add('https://example.test/about', lastmod: '2026-01-15');
-
-    $this->get('/sitemap.xml')
-        ->assertOk()
-        ->assertSee('<loc>https://example.test/about</loc>', false)
-        ->assertSee('<lastmod>2026-01-15</lastmod>', false)
-        ->assertDontSee('<changefreq>', false)
-        ->assertDontSee('<priority>', false);
-});
 
 it('includes static urls from config', function () {
     config(['seo.sitemap.urls' => [
         '/',
         ['loc' => '/contact', 'lastmod' => '2026-03-01'],
+        'https://example.test/about',
     ]]);
 
     $this->get('/sitemap.xml')
@@ -27,21 +17,46 @@ it('includes static urls from config', function () {
         ->assertSee('<loc>https://example.test</loc>', false)
         ->assertSee('<loc>https://example.test/contact</loc>', false)
         ->assertSee('<lastmod>2026-03-01</lastmod>', false)
+        ->assertSee('<loc>https://example.test/about</loc>', false)
         ->assertDontSee('<changefreq>', false)
         ->assertDontSee('<priority>', false);
 });
 
-it('includes sitemapable models', function () {
+it('includes sitemapable models from config', function () {
     $post = Post::create(['slug' => 'hello-world']);
 
-    Sitemap::models([Post::class]);
+    config(['seo.sitemap.models' => [Post::class]]);
 
     $this->get('/sitemap.xml')
         ->assertOk()
         ->assertSee('<loc>https://example.test/posts/hello-world</loc>', false)
-        ->assertSee('<lastmod>'.$post->updated_at->toDateString().'</lastmod>', false)
-        ->assertDontSee('<changefreq>', false)
-        ->assertDontSee('<priority>', false);
+        ->assertSee('<lastmod>'.$post->updated_at->toDateString().'</lastmod>', false);
+});
+
+it('rebuilds a cached sitemap when a model is created', function () {
+    config([
+        'seo.sitemap.cache' => 3600,
+        'seo.sitemap.models' => [Post::class],
+    ]);
+
+    $this->get('/sitemap.xml')
+        ->assertOk()
+        ->assertDontSee('hello-world', false);
+
+    Post::create(['slug' => 'hello-world']);
+
+    $this->get('/sitemap.xml')
+        ->assertOk()
+        ->assertSee('<loc>https://example.test/posts/hello-world</loc>', false);
+});
+
+it('rejects a sitemap entry without a url', function () {
+    config(['seo.sitemap.urls' => ['']]);
+
+    $this->withoutExceptionHandling();
+
+    expect(fn () => $this->get('/sitemap.xml'))
+        ->toThrow(InvalidArgumentException::class);
 });
 
 it('serves xml content type', function () {
@@ -58,4 +73,12 @@ it('can be disabled', function () {
     config(['seo.sitemap.enabled' => false]);
 
     $this->get('/sitemap.xml')->assertNotFound();
+});
+
+it('does not register the sitemap route when disabled before boot', function () {
+    $this->seoRoutesEnabled = false;
+    $this->refreshApplication();
+
+    expect(Route::has('seo.sitemap'))->toBeFalse()
+        ->and(Route::has('seo.robots'))->toBeFalse();
 });

@@ -71,17 +71,26 @@ This is the site-wide crawl file. Page-level `meta robots` still belongs to Lara
 
 ## Sitemap
 
-No crawler. URLs come from config, `Sitemap::add()`, and Eloquent models that implement `Sitemapable`. Each entry is a URL plus optional `lastmod` — Google ignores `changefreq` and `priority`.
+No crawler. URLs and models are read from config on each request, so the list stays the same under PHP-FPM and Octane. Each entry is a URL plus optional `lastmod`. Google ignores `changefreq` and `priority`.
 
 ```php
-use KFoobar\LaravelSeoTools\Contracts\Sitemapable;
-use KFoobar\LaravelSeoTools\Facades\Sitemap;
-
-Sitemap::add(route('home'));
-Sitemap::models([Post::class]);
+'sitemap' => [
+    'enabled' => true,
+    'route' => '/sitemap.xml',
+    'cache' => 3600, // seconds; false to disable. The cache key includes model counts and lastmod.
+    'urls' => [
+        '/',
+        ['loc' => '/contact', 'lastmod' => '2026-03-01'],
+    ],
+    'models' => [
+        App\Models\Post::class,
+    ],
+],
 ```
 
 ```php
+use KFoobar\LaravelSeoTools\Contracts\Sitemapable;
+
 class Post extends Model implements Sitemapable
 {
     public function toSitemapTag(): string|array
@@ -94,21 +103,9 @@ class Post extends Model implements Sitemapable
 }
 ```
 
-`toSitemapTag()` may also return a URL string. Register models in a service provider so they are included on every sitemap request.
+`toSitemapTag()` may also return a URL string. Models are read with `lazy()`, so the full table is not loaded at once.
 
-Static URLs in config:
-
-```php
-'sitemap' => [
-    'enabled' => true,
-    'route' => '/sitemap.xml',
-    'cache' => 3600, // seconds; false to disable
-    'urls' => [
-        '/',
-        ['loc' => '/contact', 'lastmod' => '2026-03-01'],
-    ],
-],
-```
+Set `enabled` to `false` before routes are cached if the application serves its own `/sitemap.xml` or `/robots.txt`. Rebuild the route cache after changing that flag.
 
 ## Testing
 

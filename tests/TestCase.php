@@ -7,7 +7,6 @@ namespace KFoobar\LaravelSeoTools\Tests;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use KFoobar\LaravelSeoTools\Facades\Breadcrumbs;
-use KFoobar\LaravelSeoTools\Facades\Sitemap;
 use KFoobar\LaravelSeoTools\SeoToolsServiceProvider;
 use Laravel\Head\Facades\Head;
 use Laravel\Head\Facades\Schema as HeadSchema;
@@ -16,6 +15,8 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
 {
+    protected bool $seoRoutesEnabled = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -41,7 +42,6 @@ abstract class TestCase extends Orchestra
             'Head' => Head::class,
             'Schema' => HeadSchema::class,
             'Breadcrumbs' => Breadcrumbs::class,
-            'Sitemap' => Sitemap::class,
         ];
     }
 
@@ -57,5 +57,7 @@ abstract class TestCase extends Orchestra
         ]);
         $app['config']->set('cache.default', 'array');
         $app['config']->set('seo.sitemap.cache', false);
+        $app['config']->set('seo.sitemap.enabled', $this->seoRoutesEnabled);
+        $app['config']->set('seo.robots.enabled', $this->seoRoutesEnabled);
     }
 }
