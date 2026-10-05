@@ -8,7 +8,9 @@ use Laravel\Head\Facades\Head;
 use Laravel\Head\Facades\Schema;
 use Laravel\Head\Schema\Breadcrumbs as BreadcrumbSchema;
 
-/** Request-scoped trail that renders HTML and syncs JSON-LD to Laravel Head. */
+/**
+ * Request-scoped trail that renders HTML and syncs JSON-LD to Laravel Head.
+ */
 class BreadcrumbTrail
 {
     /**
@@ -38,6 +40,9 @@ class BreadcrumbTrail
         return $this->items;
     }
 
+    /**
+     * Determine whether the trail has no crumbs.
+     */
     public function isEmpty(): bool
     {
         return $this->items === [];

@@ -7,9 +7,14 @@ namespace KFoobar\LaravelSeoTools\Http\Controllers;
 use Illuminate\Http\Response;
 use KFoobar\LaravelSeoTools\Sitemap;
 
-/** Serves the generated XML sitemap. */
+/**
+ * Serves the generated XML sitemap.
+ */
 class SitemapController
 {
+    /**
+     * Handle the incoming request.
+     */
     public function __invoke(Sitemap $sitemap): Response
     {
         abort_unless(config()->boolean('seo.sitemap.enabled'), 404);

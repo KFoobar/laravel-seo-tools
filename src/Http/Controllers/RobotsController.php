@@ -7,9 +7,14 @@ namespace KFoobar\LaravelSeoTools\Http\Controllers;
 use Illuminate\Http\Response;
 use KFoobar\LaravelSeoTools\Robots;
 
-/** Serves the generated robots.txt. */
+/**
+ * Serves the generated robots.txt.
+ */
 class RobotsController
 {
+    /**
+     * Handle the incoming request.
+     */
     public function __invoke(Robots $robots): Response
     {
         abort_unless(config()->boolean('seo.robots.enabled'), 404);
