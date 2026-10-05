@@ -1,0 +1,65 @@
+{
+    "name": "kfoobar/laravel-seo-tools",
+    "description": "Breadcrumbs, robots.txt, and sitemaps for Laravel — a companion to laravel/head",
+    "keywords": [
+        "laravel",
+        "seo",
+        "breadcrumbs",
+        "sitemap",
+        "robots"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/contracts": "^13.17",
+        "illuminate/routing": "^13.17",
+        "illuminate/support": "^13.17",
+        "illuminate/view": "^13.17",
+        "laravel/head": "^0.2"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.28",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "KFoobar\\LaravelSeoTools\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "KFoobar\\LaravelSeoTools\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "KFoobar\\LaravelSeoTools\\SeoToolsServiceProvider"
+            ],
+            "aliases": {
+                "Breadcrumbs": "KFoobar\\LaravelSeoTools\\Facades\\Breadcrumbs",
+                "Sitemap": "KFoobar\\LaravelSeoTools\\Facades\\Sitemap"
+            }
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
